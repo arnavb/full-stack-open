@@ -12,6 +12,11 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState({...anecdotes.map(val => 0)})
+  
+  const highestVotedAnecdote = () => {
+    let votesArray = Object.values(votes)
+    return votesArray.indexOf(Math.max(...votesArray))
+  }
 
   return (
     <div>
@@ -25,6 +30,10 @@ const App = () => {
         Load next anecdote
       </button>
       <button onClick={() => setVotes({...votes, [selected]: votes[selected] + 1})}>Vote</button>
+      
+      <h1>Highest voted anecdote</h1>
+      <p>{anecdotes[highestVotedAnecdote()]}</p>
+      <p>has {votes[highestVotedAnecdote()]} votes</p>
     </div>
   );
 };
