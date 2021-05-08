@@ -11,12 +11,12 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
-  const [votes, setVotes] = useState({})
+  const [votes, setVotes] = useState({...anecdotes.map(val => 0)})
 
   return (
     <div>
       <p>{anecdotes[selected]}</p>
-      <p>This quote has {votes[selected] || 0} votes</p>
+      <p>This quote has {votes[selected]} votes</p>
       <button
         onClick={() =>
           setSelected(Math.floor(Math.random() * anecdotes.length))
@@ -24,7 +24,7 @@ const App = () => {
       >
         Load next anecdote
       </button>
-      <button onClick={() => setVotes({...votes, [selected]: (votes[selected] || 0) + 1})}>Vote</button>
+      <button onClick={() => setVotes({...votes, [selected]: votes[selected] + 1})}>Vote</button>
     </div>
   );
 };
