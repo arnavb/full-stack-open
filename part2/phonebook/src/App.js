@@ -16,12 +16,35 @@ const App = () => {
 
   const addNewPerson = (newName, newPhoneNumber) => {
     if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already in the phonebook!`);
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook. Update their phone number?`
+        )
+      ) {
+        updateExistingPerson(newName, newPhoneNumber);
+      }
     } else {
       personsService
         .create({ name: newName, number: newPhoneNumber })
         .then((newPerson) => setPersons([...persons, newPerson]));
     }
+  };
+
+  const updateExistingPerson = (name, newPhoneNumber) => {
+    const correspondingPerson = persons.find((person) => person.name === name);
+    personsService
+      .update(correspondingPerson.id, {
+        ...correspondingPerson,
+        name,
+        number: newPhoneNumber,
+      })
+      .then((updatedPerson) => {
+        setPersons(
+          persons.map((person) =>
+            person.id === updatedPerson.id ? updatedPerson : person
+          )
+        );
+      });
   };
 
   const removePerson = (id) => {
