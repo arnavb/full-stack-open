@@ -6,7 +6,13 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setPersons([...persons, { name: newName }]);
+
+    if (persons.some((person) => person.name === newName)) {
+      alert(`${newName} is already in the phonebook!`);
+    } else {
+      setPersons([...persons, { name: newName }]);
+    }
+
     setNewName("");
   };
 
