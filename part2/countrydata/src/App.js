@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const WEATHER_API_KEY = process.env.REACT_APP_WEATHERSTACK_API_KEY;
+
 const OneCountryInfo = ({ country }) => {
+  const [weatherInfo, setWeatherInfo] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get("http://api.weatherstack.com/current", {
+        params: { access_key: WEATHER_API_KEY, query: country.capital },
+      })
+      .then((response) => {
+        setWeatherInfo(response.data.current);
+      });
+  }, [country]);
+
   return (
     <>
       <h2>{country.name}</h2>
@@ -17,6 +31,21 @@ const OneCountryInfo = ({ country }) => {
       </ul>
 
       <img alt={`Flag for ${country.name}`} src={country.flag} />
+
+      <h3>Weather in {country.capital}</h3>
+
+      {weatherInfo && (
+        <>
+          <p>Temperature: {weatherInfo.temperature} C</p>
+          <img
+            alt={`Weather icon for ${country.capital}`}
+            src={weatherInfo.weather_icons[0]}
+          />
+          <p>
+            Wind: {weatherInfo.wind_speed} mph direction {weatherInfo.wind_dir}
+          </p>
+        </>
+      )}
     </>
   );
 };
