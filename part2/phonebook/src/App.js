@@ -24,6 +24,16 @@ const App = () => {
     }
   };
 
+  const removePerson = (id) => {
+    const correspondingPerson = persons.find((person) => person.id === id);
+
+    if (window.confirm(`Delete ${correspondingPerson.name}?`)) {
+      personsService.remove(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -31,7 +41,11 @@ const App = () => {
       <h2>Add a new person</h2>
       <PersonForm handleSubmit={addNewPerson} />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons
+        persons={persons}
+        filter={filter}
+        handlePersonRemoval={removePerson}
+      />
     </div>
   );
 };
