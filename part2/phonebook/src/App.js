@@ -8,7 +8,8 @@ import personsService from "./services/persons";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filter, setFilter] = useState("");
-  const [notification, setNotification] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [failureNotification, setFailureNotification] = useState(false);
 
   useEffect(() => {
     personsService
@@ -30,9 +31,9 @@ const App = () => {
         .create({ name: newName, number: newPhoneNumber })
         .then((newPerson) => {
           setPersons([...persons, newPerson]);
-          setNotification(`Successfully added ${newName}`);
+          setNotificationMessage(`Successfully added ${newName}`);
           setTimeout(() => {
-            setNotification("");
+            setNotificationMessage("");
           }, 5000);
         });
     }
@@ -52,10 +53,23 @@ const App = () => {
             person.id === updatedPerson.id ? updatedPerson : person
           )
         );
-        setNotification(`Successfully changed phone number for ${name}`);
+        setNotificationMessage(`Successfully changed phone number for ${name}`);
         setTimeout(() => {
-          setNotification("");
+          setNotificationMessage("");
         }, 5000);
+      })
+      .catch((error) => {
+        setNotificationMessage(`${name} was already removed from the server!`);
+        setFailureNotification(true);
+
+        setTimeout(() => {
+          setNotificationMessage("");
+          setFailureNotification(false);
+        }, 5000);
+
+        setPersons(
+          persons.filter((person) => person.id !== correspondingPerson.id)
+        );
       });
   };
 
@@ -72,7 +86,12 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      {notification && <Notification message={notification} />}
+      {notificationMessage && (
+        <Notification
+          message={notificationMessage}
+          failureNotification={failureNotification}
+        />
+      )}
       <Filter value={filter} handleChange={setFilter} />
       <h2>Add a new person</h2>
       <PersonForm handleSubmit={addNewPerson} />
