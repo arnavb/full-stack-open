@@ -7,7 +7,7 @@ const Persons = ({ persons, filter }) => {
     )
     .map((person) => (
       <li key={person.name}>
-        {person.name} {person.phoneNumber}
+        {person.name} {person.number}
       </li>
     ));
 };
