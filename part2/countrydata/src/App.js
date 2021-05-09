@@ -21,6 +21,31 @@ const OneCountryInfo = ({ country }) => {
   );
 };
 
+const MultipleCountryList = ({ countries }) => {
+  const [oneCountry, setOneCountry] = useState(null);
+
+  const handleClick = (_, country) => {
+    setOneCountry(country);
+  };
+
+  return (
+    <div>
+      {oneCountry ? (
+        <OneCountryInfo country={oneCountry} />
+      ) : (
+        countries.map((country) => (
+          <p key={country.numericCode}>
+            {country.name}{" "}
+            <button onClick={(event) => handleClick(event, country)}>
+              Show info
+            </button>
+          </p>
+        ))
+      )}
+    </div>
+  );
+};
+
 const App = () => {
   const [filter, setFilter] = useState("");
   const [countries, setCountries] = useState([]);
@@ -39,9 +64,7 @@ const App = () => {
   if (filteredCountries.length > 10) {
     countryInfo = <p>Too many matches, specify another filter</p>;
   } else if (filteredCountries.length > 1) {
-    countryInfo = filteredCountries.map((country) => (
-      <p key={country.alpha2Code}>{country.name}</p>
-    ));
+    countryInfo = <MultipleCountryList countries={filteredCountries} />;
   } else if (filteredCountries.length === 1) {
     countryInfo = <OneCountryInfo country={filteredCountries[0]} />;
   }
