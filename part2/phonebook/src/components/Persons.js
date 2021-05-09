@@ -6,7 +6,7 @@ const Persons = ({ persons, filter }) => {
       person.name.toLowerCase().includes(filter.toLowerCase())
     )
     .map((person) => (
-      <li key={person.name}>
+      <li key={person.id}>
         {person.name} {person.number}
       </li>
     ));
