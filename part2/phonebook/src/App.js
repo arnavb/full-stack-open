@@ -16,11 +16,18 @@ const App = () => {
     });
   }, []);
 
-  const handleSubmit = (newName, newPhoneNumber) => {
+  const addNewPerson = (newName, newPhoneNumber) => {
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already in the phonebook!`);
     } else {
-      setPersons([...persons, { name: newName, number: newPhoneNumber }]);
+      axios
+        .post(`${SERVER_URL}/persons`, {
+          name: newName,
+          number: newPhoneNumber,
+        })
+        .then((response) => {
+          setPersons([...persons, response.data]);
+        });
     }
   };
 
@@ -29,7 +36,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter value={filter} handleChange={setFilter} />
       <h2>Add a new person</h2>
-      <PersonForm handleSubmit={handleSubmit} />
+      <PersonForm handleSubmit={addNewPerson} />
       <h2>Numbers</h2>
       <Persons persons={persons} filter={filter} />
     </div>
