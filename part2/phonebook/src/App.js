@@ -2,32 +2,25 @@ import React, { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
-
-const SERVER_URL = "http://localhost:3001";
+import personsService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios.get(`${SERVER_URL}/persons`).then((response) => {
-      setPersons(response.data);
-    });
+    personsService
+      .getAll()
+      .then((initialPersons) => setPersons(initialPersons));
   }, []);
 
   const addNewPerson = (newName, newPhoneNumber) => {
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already in the phonebook!`);
     } else {
-      axios
-        .post(`${SERVER_URL}/persons`, {
-          name: newName,
-          number: newPhoneNumber,
-        })
-        .then((response) => {
-          setPersons([...persons, response.data]);
-        });
+      personsService
+        .create({ name: newName, number: newPhoneNumber })
+        .then((newPerson) => setPersons([...persons, newPerson]));
     }
   };
 
