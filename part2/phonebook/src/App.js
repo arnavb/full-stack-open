@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 import personsService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     personsService
@@ -26,7 +28,13 @@ const App = () => {
     } else {
       personsService
         .create({ name: newName, number: newPhoneNumber })
-        .then((newPerson) => setPersons([...persons, newPerson]));
+        .then((newPerson) => {
+          setPersons([...persons, newPerson]);
+          setNotification(`Successfully added ${newName}`);
+          setTimeout(() => {
+            setNotification("");
+          }, 5000);
+        });
     }
   };
 
@@ -44,6 +52,10 @@ const App = () => {
             person.id === updatedPerson.id ? updatedPerson : person
           )
         );
+        setNotification(`Successfully changed phone number for ${name}`);
+        setTimeout(() => {
+          setNotification("");
+        }, 5000);
       });
   };
 
@@ -60,6 +72,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {notification && <Notification message={notification} />}
       <Filter value={filter} handleChange={setFilter} />
       <h2>Add a new person</h2>
       <PersonForm handleSubmit={addNewPerson} />
