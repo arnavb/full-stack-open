@@ -11,6 +11,16 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
   const [failureNotification, setFailureNotification] = useState(false);
 
+  const notify = (message, failure = false) => {
+    setNotificationMessage(message);
+    setFailureNotification(failure);
+
+    setTimeout(() => {
+      setNotificationMessage("");
+      setFailureNotification(false);
+    }, 5000);
+  };
+
   useEffect(() => {
     personsService
       .getAll()
@@ -31,10 +41,10 @@ const App = () => {
         .create({ name: newName, number: newPhoneNumber })
         .then((newPerson) => {
           setPersons([...persons, newPerson]);
-          setNotificationMessage(`Successfully added ${newName}`);
-          setTimeout(() => {
-            setNotificationMessage("");
-          }, 5000);
+          notify(`Successfully added ${newName}`);
+        })
+        .catch((error) => {
+          notify(error.response.data.error, true);
         });
     }
   };
@@ -53,23 +63,18 @@ const App = () => {
             person.id === updatedPerson.id ? updatedPerson : person
           )
         );
-        setNotificationMessage(`Successfully changed phone number for ${name}`);
-        setTimeout(() => {
-          setNotificationMessage("");
-        }, 5000);
+        notify(`Successfully changed phone number for ${name}`);
       })
       .catch((error) => {
-        setNotificationMessage(`${name} was already removed from the server!`);
-        setFailureNotification(true);
+        if (error.response.data.error) {
+          notify(error.response.data.error, true);
+        } else {
+          notify(`${name} was already removed from the server!`, true);
 
-        setTimeout(() => {
-          setNotificationMessage("");
-          setFailureNotification(false);
-        }, 5000);
-
-        setPersons(
-          persons.filter((person) => person.id !== correspondingPerson.id)
-        );
+          setPersons(
+            persons.filter((person) => person.id !== correspondingPerson.id)
+          );
+        }
       });
   };
 
